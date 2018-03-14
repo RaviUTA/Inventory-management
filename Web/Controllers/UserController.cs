@@ -70,16 +70,34 @@ namespace Web.Controllers
         // GET: User/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var user = _userService.GetById(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            var model = new UserViewModel(user);
+            Console.WriteLine(model.UserName);
+            return View("Edit", model);
+            //return View();
         }
 
         // POST: User/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, UserViewModel model)
         {
             try
             {
+               
+                var user = new User()
+                {
+                    Id = model.Id,
+                    UserName = model.UserName,
+                    EmailId = model.EmailId,
+                    IsActive = model.IsActive,
+                };
                 // TODO: Add update logic here
+                _userService.InsertOrUpdate(user);
 
                 return RedirectToAction("UserList");
             }
